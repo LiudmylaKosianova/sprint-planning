@@ -9,12 +9,14 @@ import java.util.ArrayList;
 
 public class Sprint {
     public int capacity, ticketsLimit, countCapacity, countTicketsLimit;
+    public int lastIndex = 0;
     Ticket[] tickets;
 
     public Sprint(int capacity, int ticketsLimit) {
 
         this.capacity = capacity;
         this.ticketsLimit = ticketsLimit;
+        this.tickets = new Ticket[ticketsLimit];
     }
 
     /**
@@ -44,6 +46,13 @@ public class Sprint {
         return false;
     }
 
+    /**
+     * accepts a userStory, if it is not `null`, not completed
+     * and its uncompleted dependencies are already accepted to the sprint.
+     * @param userStory
+     * @return true, if the user story is accepted, false otherwise
+     */
+
     public boolean addUserStory(UserStory userStory) {
 
         if(userStory!=null && !userStory.isCompleted()
@@ -51,17 +60,26 @@ public class Sprint {
                 && uncompletedDependenciesAccepted(userStory) ){
 
             //add userStory to Ticket[] tickets;
+            tickets[lastIndex]=userStory;
             countTicketsLimit++;
             countCapacity = countCapacity+userStory.getEstimate();
+            lastIndex++;
             return true;
         }else{ return false;}
     }
 
+    /**
+     * accepts a bug, if it is not `null` and not completed.
+     * @param bugReport
+     * @return `true` if the bug is accepted, `false` otherwise.
+     */
     public boolean addBug(Bug bugReport) {
 
         if(bugReport!=null && !bugReport.isCompleted()
                 && limitsNotReached()){
             //add bugReport to Ticket[] tickets;
+            tickets[lastIndex]=bugReport;
+            lastIndex++;
             countTicketsLimit++;
             countCapacity = countCapacity + bugReport.getEstimate();
             return true;
@@ -69,11 +87,21 @@ public class Sprint {
             return false;}
     }
 
+    /**
+     *   Make sure the order of tickets is as they were accepted to the sprint.
+     * @return a defensive copy of the array of the sprint tickets.
+     */
     public Ticket[] getTickets() {
-        throw new UnsupportedOperationException("Implement this method");
+        Ticket [] copy = new Ticket[tickets.length];
+        System.arraycopy(tickets, 0, copy, 0, tickets.length);
+        return copy;
     }
 
     public int getTotalEstimate() {
-        throw new UnsupportedOperationException("Implement this method");
+        int total = 0;
+        for(Ticket x: tickets){
+            total = total+x.getEstimate();
+        }
+        return total;
     }
 }
