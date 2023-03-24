@@ -52,11 +52,11 @@ public class Sprint {
 
         for(UserStory us: userStory.getDependencies()){
             //check, if they are not completed &&  if they are already accepted
-            if(!us.isCompleted() && isAccepted(us)){
-                return true;
+            if(!us.isCompleted() && !isAccepted(us)){
+                return false;
             }
         }
-        return false;
+        return true;
     }
 
     /**
