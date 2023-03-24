@@ -8,7 +8,8 @@ import java.util.ArrayList;
 //**Important restriction:** Note that in this exercise you **may not** use *Collections* and *Streams*.
 
 public class Sprint {
-    public int capacity, ticketsLimit, countCapacity, countTicketsLimit;
+    public int capacity, ticketsLimit;
+    public int countCapacity, countTicketsLimit;
     public int lastIndex = 0;
     Ticket[] tickets;
 
@@ -20,17 +21,17 @@ public class Sprint {
     }
 
     /**
-     * checks if tickets total estimate less than time capacity
-     * and if total amount of tickets less than tickets limit.
+     * checks if total amount of tickets less than tickets limit.
      * @return true, if they are less
      */
     protected boolean limitsNotReached (){
-        return countTicketsLimit < ticketsLimit && countCapacity < capacity;
+        return countTicketsLimit < ticketsLimit;
     }
+
 
     protected boolean isAccepted(UserStory userStory){
         for(Ticket x: tickets){
-            if(x.getId() == userStory.getId()
+            if(x!=null && x.getId() == userStory.getId()
                     && x.getName() == userStory.getName()){
                 return true;
             }
@@ -68,14 +69,14 @@ public class Sprint {
     public boolean addUserStory(UserStory userStory) {
 
         if(userStory!=null && !userStory.isCompleted()
-                &&  limitsNotReached()
+                &&  limitsNotReached() && (countCapacity+userStory.getEstimate())<=capacity
                 && uncompletedDependenciesAccepted(userStory) ){
 
             //add userStory to Ticket[] tickets;
             tickets[lastIndex]=userStory;
-            countTicketsLimit++;
             countCapacity = countCapacity+userStory.getEstimate();
             lastIndex++;
+            countTicketsLimit++;
             return true;
         }else{ return false;}
     }
@@ -88,12 +89,12 @@ public class Sprint {
     public boolean addBug(Bug bugReport) {
 
         if(bugReport!=null && !bugReport.isCompleted()
-                && limitsNotReached()){
+                && limitsNotReached() && (countCapacity + bugReport.getEstimate()) <= capacity){
             //add bugReport to Ticket[] tickets;
             tickets[lastIndex]=bugReport;
+            countCapacity = countCapacity + bugReport.getEstimate();
             lastIndex++;
             countTicketsLimit++;
-            countCapacity = countCapacity + bugReport.getEstimate();
             return true;
         }else{
             return false;}
@@ -105,14 +106,17 @@ public class Sprint {
      */
     public Ticket[] getTickets() {
         Ticket [] copy = new Ticket[tickets.length];
-        System.arraycopy(tickets, 0, copy, 0, tickets.length);
+        for(int i=0; i<tickets.length;i++){
+            if(tickets[i]!=null){copy[i]=tickets[i];}
+        }
+        //System.arraycopy(tickets, 0, copy, 0, tickets.length);
         return copy;
     }
 
     public int getTotalEstimate() {
         int total = 0;
         for(Ticket x: tickets){
-            total = total+x.getEstimate();
+            if(x!=null) { total = total+x.getEstimate();}
         }
         return total;
     }
