@@ -28,6 +28,16 @@ public class Sprint {
         return countTicketsLimit < ticketsLimit && countCapacity < capacity;
     }
 
+    protected boolean isAccepted(UserStory userStory){
+        for(Ticket x: tickets){
+            if(x.getId() == userStory.getId()
+                    && x.getName() == userStory.getName()){
+                return true;
+            }
+        }
+        return false;
+    }
+
     /**
      * @param userStory
      * @return true, if uncompleted dependencies of given UserStory
@@ -39,9 +49,11 @@ public class Sprint {
             return true;
         }
 
-        for(UserStory x: userStory.getDependencies()){
-            //check, if they are not completed
-            //check, if they are already accepted
+        for(UserStory us: userStory.getDependencies()){
+            //check, if they are not completed &&  if they are already accepted
+            if(!us.isCompleted() && isAccepted(us)){
+                return true;
+            }
         }
         return false;
     }
