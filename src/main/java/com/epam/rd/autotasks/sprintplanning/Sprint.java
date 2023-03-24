@@ -105,11 +105,15 @@ public class Sprint {
      * @return a defensive copy of the array of the sprint tickets.
      */
     public Ticket[] getTickets() {
-        Ticket [] copy = new Ticket[tickets.length];
-        for(int i=0; i<tickets.length;i++){
-            if(tickets[i]!=null){copy[i]=tickets[i];}
+
+        int newLength = 0;
+        for (Ticket ticket : tickets) {
+            if (ticket != null) {
+                newLength++;
+            }
         }
-        //System.arraycopy(tickets, 0, copy, 0, tickets.length);
+        Ticket [] copy = new Ticket[newLength];
+        System.arraycopy(tickets, 0, copy, 0, newLength);
         return copy;
     }
 
